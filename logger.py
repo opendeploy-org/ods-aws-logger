@@ -98,7 +98,7 @@ def verify_past_log(id_token, log_data, log_attestation):
                 "--owner", owner,
                 "-b", attestation_path,
                 log_path,
-                "--signer-workflow", "opendeploy-org/aws-logger/.github/workflows/aws-logger.yml",
+                "--signer-workflow", "opendeploy-org/ods-aws-logger/.github/workflows/ods-aws-logger.yml",
                 "--format", "json"
             ]
             cmd_output = subprocess.run(
