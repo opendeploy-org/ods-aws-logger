@@ -220,6 +220,8 @@ def main():
                 if event_name not in past_log_data["logs"]:
                     raise Exception(f"Event type is missing from past log")
 
+                log_data["logs"][event_name] = {}
+
                 for region in LOG_REGIONS:
                     if region not in past_log_data["logs"][event_name]:
                         raise Exception(
