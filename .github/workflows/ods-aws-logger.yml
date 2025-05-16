@@ -41,7 +41,7 @@ jobs:
       - name: Log events
         run: |
           mkdir ${{ runner.temp }}/output
-          python ods-dns-logger/logger.py
+          python ods-aws-logger/logger.py
         env:
           LOG_DOWNLOAD_URL: ${{ inputs.LOG_DOWNLOAD_URL }}
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
