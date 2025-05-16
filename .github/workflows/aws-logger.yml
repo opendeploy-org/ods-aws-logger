@@ -1,0 +1,50 @@
+name: ODS AWS Logger
+
+on:
+  workflow_call:
+    inputs:
+      LOG_DOWNLOAD_URL:
+        required: false
+        type: string
+    secrets:
+      AWS_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_SECRET:
+        required: true
+
+jobs:
+  log-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ods-aws-logger
+        uses: actions/checkout@v4
+        with:
+          repository: opendeploy-org/ods-aws-logger
+          path: ods-aws-logger
+
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install -r ods-aws-logger/requirements.txt
+
+      - name: Get ID token
+        id: get-token
+        run: |
+          TOKEN=$(curl -sH "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$TOKEN"
+          echo "id_token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Log events
+        run: |
+          mkdir ${{ runner.temp }}/output
+          python ods-dns-logger/logger.py
+        env:
+          LOG_DOWNLOAD_URL: ${{ inputs.LOG_DOWNLOAD_URL }}
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
+          ID_TOKEN: ${{ steps.get-token.outputs.id_token }}
+          OUTPUT_FOLDER: ${{ runner.temp }}/output
