@@ -229,8 +229,8 @@ def main():
                     event_data = lookup_event_records(
                         boto3_session, event_name, lookup_start_time, region)
 
-                    log_data["logs"][region][event_name] = merge_event_records(
-                        past_log_data["logs"][region][event_name], event_data)
+                    log_data["logs"][event_name][region] = merge_event_records(
+                        past_log_data["logs"][event_name][region], event_data)
 
         # save log data to output folder
         with open(Path(params["outputFolder"]) / "log.json", "w") as json_file:
