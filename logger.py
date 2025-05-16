@@ -216,13 +216,14 @@ def main():
             lookup_start_time = datetime.fromtimestamp(
                 past_log_data["lastLogTime"], tz=timezone.utc) - timedelta(hours=6)
 
-            for region in LOG_REGIONS:
-                if region not in past_log_data["logs"]:
-                    raise Exception(f"Event region is missing from past log")
+            for event_name in LOG_EVENTS:
+                if event_name not in past_log_data["logs"]:
+                    raise Exception(f"Event type is missing from past log")
 
-                for event_name in LOG_EVENTS:
-                    if event_name not in past_log_data["logs"][region]:
-                        raise Exception(f"Event type is missing from past log")
+                for region in LOG_REGIONS:
+                    if region not in past_log_data["logs"][event_name]:
+                        raise Exception(
+                            f"Event region is missing from past log")
 
                     print(f"Looking up {event_name} evetns in {region}")
                     event_data = lookup_event_records(
