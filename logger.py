@@ -224,7 +224,7 @@ def main():
                     if event_name not in past_log_data["logs"][region]:
                         raise Exception(f"Event type is missing from past log")
 
-                    print(f"Looking up {event_name} evetns")
+                    print(f"Looking up {event_name} evetns in {region}")
                     event_data = lookup_event_records(
                         boto3_session, event_name, lookup_start_time, region)
 
