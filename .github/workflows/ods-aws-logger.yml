@@ -48,3 +48,19 @@ jobs:
           AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
           ID_TOKEN: ${{ steps.get-token.outputs.id_token }}
           OUTPUT_FOLDER: ${{ runner.temp }}/output
+
+      - name: Generate provenance
+        id: attest
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ runner.temp }}/output/*.json
+
+      - name: Copy attestation file
+        run: |
+          cp ${{ steps.attest.outputs.bundle-path }} ${{ runner.temp }}/output/attestation.json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: log
+          path: ${{ runner.temp }}/output/*
