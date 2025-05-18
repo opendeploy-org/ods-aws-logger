@@ -63,10 +63,10 @@ def load_log_from_url(log_dwonload_url):
                 raise Exception(
                     f"Missing file(s) in downloaded log: {', '.join(missing)}")
 
-            log_data = json.loads(zip_file.read("log.json"))
-            log_attestation = json.loads(zip_file.read("attestation.json"))
+            log_data_bytes = zip_file.read("log.json")
+            log_attestation_btyes = zip_file.read("attestation.json")
 
-            return log_data, log_attestation
+            return log_data_bytes, log_attestation_btyes
     except Exception as e:
         raise Exception(f"Failed to download log: {e}")
 
@@ -77,7 +77,7 @@ def extract_workflow_envs(id_token):
     return payload["repository_owner"], payload["job_workflow_sha"]
 
 
-def verify_past_log(id_token, log_data, log_attestation):
+def verify_past_log(id_token, log_data_bytes, log_attestation_bytes):
     try:
         owner, curr_commit_sha = extract_workflow_envs(id_token)
 
@@ -86,11 +86,11 @@ def verify_past_log(id_token, log_data, log_attestation):
             log_path = Path(tmp_dir) / "log.json"
             attestation_path = Path(tmp_dir) / "attestation.json"
 
-            with open(log_path, "w") as f:
-                json.dump(log_data, f)
+            with open(log_path, "wb") as f:
+                f.write(log_data_bytes)
 
-            with open(attestation_path, "w") as f:
-                json.dump(log_attestation, f)
+            with open(attestation_path, "wb") as f:
+                f.write(log_attestation_bytes)
 
             # execute gh attestation verify
             cmd = [
@@ -191,12 +191,12 @@ def main():
         else:
             # download and verify past log data
             print("Loading past log data")
-            past_log_data, past_log_attestation = load_log_from_url(
+            past_log_data_bytes, past_log_attestation_btyes = load_log_from_url(
                 params["logDownloadURL"])
-
+            past_log_data = json.loads(past_log_data_bytes)
             print("Verifying past log data")
             verify_past_log(params["idToken"],
-                            past_log_data, past_log_attestation)
+                            past_log_data_bytes, past_log_attestation_btyes)
 
             if account_id != past_log_data["accountID"]:
                 raise Exception(f"The account ID differs from past log data")
