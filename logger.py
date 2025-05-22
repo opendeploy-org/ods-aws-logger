@@ -15,7 +15,7 @@ import requests
 LOG_REGIONS = ["us-east-1", "us-west-1",
                "eu-central-1", "eu-west-1", "ap-northeast-1"]
 LOG_EVENTS = ["RunInstances", "StartInstances", "RegisterTargets",
-              "DeregisterTargets", "CreateReplaceRootVolumeTask"]
+              "DeregisterTargets", "CreateReplaceRootVolumeTask", "CreateLoadBalancer"]
 TRUSTED_COMMIT_SHA = []
 
 
